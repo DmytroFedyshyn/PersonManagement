@@ -8,7 +8,7 @@ public static class DbSeeder
 {
     public static async Task SeedAsync(AppDbContext context)
     {
-        if (await context.Persons.AnyAsync()) return; // не seed'ити повторно
+        if (await context.Persons.AnyAsync()) return;
 
         var people = Enumerable.Range(1, 10).Select(_ =>
         {
