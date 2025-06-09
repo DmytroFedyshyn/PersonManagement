@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace PersonManagement.DAL;
+namespace PersonManagement.DAL.Interfaces;
 
 public interface IRepository<T> where T : class
 {

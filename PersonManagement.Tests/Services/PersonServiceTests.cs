@@ -1,13 +1,17 @@
 ﻿using AutoMapper;
 using Faker;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using PersonManagement.BLL;
-using PersonManagement.BLL.DTOs;
+using PersonManagement.BLL.Requests;
+using PersonManagement.BLL.Responses;
 using PersonManagement.BLL.Services;
+using PersonManagement.DAL;
 using PersonManagement.DAL.Entities;
 using PersonManagement.DAL.Interfaces;
-using Microsoft.Extensions.Logging;
+using PersonManagement.DAL.Repositories;
 using System.Linq.Expressions;
 
 namespace PersonManagement.Tests.Services;
@@ -26,7 +30,7 @@ public class PersonServiceTests
     public async Task AddPersonAsync_Should_Call_Add_And_Save()
     {
         // Arrange
-        var dto = new PersonCreateDto
+        var dto = new PersonCreateResponse
         {
             FirstName = Name.First(),
             LastName = Name.Last(),
@@ -87,5 +91,59 @@ public class PersonServiceTests
 
         // Assert
         result.Should().BeEquivalentTo(people);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_Should_Return_Correct_Items_By_City_Filter()
+    {
+        // Arrange
+        var city = Faker.Address.City();
+        var expectedPerson = new Person
+        {
+            FirstName = Name.First(),
+            LastName = Name.Last(),
+            Address = new DAL.Entities.Address
+            {
+                City = city,
+                AddressLine = Faker.Address.StreetAddress()
+            }
+        };
+
+        var dbOptions = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        await using (var context = new AppDbContext(dbOptions))
+        {
+            context.Persons.AddRange(
+                expectedPerson,
+                new Person
+                {
+                    FirstName = Name.First(),
+                    LastName = Name.Last(),
+                    Address = new DAL.Entities.Address
+                    {
+                        City = Faker.Address.City(),
+                        AddressLine = Faker.Address.StreetAddress()
+                    }
+                }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        await using (var context = new AppDbContext(dbOptions))
+        {
+            var repository = new PersonRepository(context);
+
+            Expression<Func<Person, bool>> filter = p => p.Address != null && p.Address.City == city;
+
+            // Act
+            var result = await repository.GetAllAsync(filter, p => p.Address!);
+
+            // Assert
+            result.Should().ContainSingle()
+                .Which.Should().BeEquivalentTo(expectedPerson, options =>
+                    options.ExcludingMissingMembers());
+        }
     }
 }

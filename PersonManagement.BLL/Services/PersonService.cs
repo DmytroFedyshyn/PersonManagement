@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using PersonManagement.BLL.DTOs;
 using PersonManagement.BLL.Interfaces;
+using PersonManagement.BLL.Requests;
+using PersonManagement.BLL.Responses;
 using PersonManagement.DAL.Entities;
 using PersonManagement.DAL.Interfaces;
 
@@ -20,7 +21,7 @@ public class PersonService : IPersonService
         _logger = logger;
     }
 
-    public async Task AddPersonAsync(PersonCreateDto dto)
+    public async Task AddPersonAsync(PersonCreateResponse dto)
     {
         _logger.LogInformation("Adding person: {FirstName} {LastName}", dto.FirstName, dto.LastName);
 
@@ -34,17 +35,8 @@ public class PersonService : IPersonService
 
     public async Task<IEnumerable<Person>> GetFilteredPersonsAsync(GetAllRequest filter)
     {
-        if (string.IsNullOrEmpty(filter.FirstName) &&
-            string.IsNullOrEmpty(filter.LastName) &&
-            string.IsNullOrEmpty(filter.City))
-        {
-            _logger.LogWarning("No filters applied. Fetching all persons.");
-        }
-        else
-        {
-            _logger.LogInformation("Filtering persons: FirstName={FirstName}, LastName={LastName}, City={City}",
-                filter.FirstName, filter.LastName, filter.City);
-        }
+        _logger.LogInformation("Filtering persons: FirstName={FirstName}, LastName={LastName}, City={City}",
+            filter.FirstName, filter.LastName, filter.City);
 
         var result = await _repository.GetAllAsync(
             p =>

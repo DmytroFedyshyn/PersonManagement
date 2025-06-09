@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using PersonManagement.BLL.DTOs;
+using PersonManagement.BLL.Responses;
 
 namespace PersonManagement.BLL.Validators;
 
-public class PersonCreateValidator : AbstractValidator<PersonCreateDto>
+public class PersonCreateValidator : AbstractValidator<PersonCreateResponse>
 {
     public PersonCreateValidator()
     {

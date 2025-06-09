@@ -1,6 +1,6 @@
-﻿namespace PersonManagement.BLL.DTOs;
+﻿namespace PersonManagement.BLL.Responses;
 
-public class PersonCreateDto
+public class PersonCreateResponse
 {
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;

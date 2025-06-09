@@ -3,8 +3,10 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PersonManagement.BLL;
+using PersonManagement.BLL.Constants;
 using PersonManagement.BLL.Validators;
 using PersonManagement.DAL;
+using PersonManagement.PL.Extensions;
 using PersonManagement.PL.Infrastructure;
 using PersonManagement.PL.Middlewares;
 
@@ -28,9 +30,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.RegisterBusinessLogicServices();
 builder.Services.RegisterDataAccessServices();
 
+builder.AddProjectCors();
+
 var app = builder.Build();
 
+app.UseCors(ApplicationConstants.CorsPolicySectionName);
+
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

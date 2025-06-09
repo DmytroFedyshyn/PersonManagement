@@ -1,7 +1,7 @@
 ﻿using FluentValidation.TestHelper;
-using PersonManagement.BLL.DTOs;
 using PersonManagement.BLL.Validators;
 using Faker;
+using PersonManagement.BLL.Responses;
 
 namespace PersonManagement.Tests.Validators;
 
@@ -12,20 +12,25 @@ public class PersonCreateValidatorTests
     [Fact]
     public void Should_Have_Error_When_FirstName_Empty()
     {
-        var model = new PersonCreateDto
+        // Arrange
+        var model = new PersonCreateResponse
         {
             FirstName = "",
             LastName = Name.Last()
         };
 
+        // Act
         var result = _validator.TestValidate(model);
+
+        // Assert
         result.ShouldHaveValidationErrorFor(x => x.FirstName);
     }
 
     [Fact]
     public void Should_Pass_When_All_Valid()
     {
-        var model = new PersonCreateDto
+        // Arrange
+        var model = new PersonCreateResponse
         {
             FirstName = Name.First(),
             LastName = Name.Last(),
@@ -33,21 +38,28 @@ public class PersonCreateValidatorTests
             AddressLine = Address.StreetAddress()
         };
 
+        // Act
         var result = _validator.TestValidate(model);
+
+        // Assert
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public void Should_Require_AddressLine_If_City_Provided()
     {
-        var model = new PersonCreateDto
+        // Arrange
+        var model = new PersonCreateResponse
         {
             FirstName = Name.First(),
             LastName = Name.Last(),
             City = Address.City()
         };
 
+        // Act
         var result = _validator.TestValidate(model);
+
+        // Assert
         result.ShouldHaveValidationErrorFor(x => x.AddressLine);
     }
 }

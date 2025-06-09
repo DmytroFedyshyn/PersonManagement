@@ -1,4 +1,4 @@
-﻿namespace PersonManagement.BLL.DTOs;
+﻿namespace PersonManagement.BLL.Requests;
 
 public class GetAllRequest
 {

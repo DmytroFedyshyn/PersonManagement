@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PersonManagement.BLL.DTOs;
+using PersonManagement.BLL.Responses;
 using PersonManagement.DAL.Entities;
 
 namespace PersonManagement.BLL;
@@ -8,7 +8,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<PersonCreateDto, Person>()
+        CreateMap<PersonCreateResponse, Person>()
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src =>
                 string.IsNullOrWhiteSpace(src.City) || string.IsNullOrWhiteSpace(src.AddressLine)
                     ? null
