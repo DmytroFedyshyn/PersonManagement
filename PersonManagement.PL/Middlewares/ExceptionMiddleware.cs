@@ -26,7 +26,7 @@ public class ExceptionMiddleware
         {
             _logger.LogError(ex, "Unhandled exception occurred");
 
-            var traceId = Guid.NewGuid().ToString(); // унікальний ідентифікатор для дебагу
+            var traceId = Guid.NewGuid().ToString();
             context.Items["TraceId"] = traceId;
 
             await HandleExceptionAsync(context, ex, traceId);
